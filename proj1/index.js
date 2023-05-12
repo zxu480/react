@@ -43,7 +43,7 @@ const API = (() => {
 })();
 
 const Model = (() => {
-  // implement your logic for Model
+
   class State {
     #onChange;
     #inventory;
