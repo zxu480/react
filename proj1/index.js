@@ -97,7 +97,6 @@ const View = (() => {
       (inventory) => {
         inventoryEls.innerHTML = '';
         inventory.forEach((item) => {
-          console.log(item)
           const li = document.createElement('li');
           li.innerHTML = `
           <span>${item.content}</span>
@@ -114,7 +113,6 @@ const View = (() => {
       (cart) => {
         cartEls.innerHTML = '';
         cart.forEach((item) => {
-          console.log(item)
           const li = document.createElement('li');
           li.innerHTML = `
             <span>${item.content} × ${item.amount}</span>
