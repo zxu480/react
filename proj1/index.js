@@ -189,7 +189,7 @@ const Controller = ((model, view) => {
       }
     })
   };
-
+  
   const handleDelete = () => {
     view.cartEls.addEventListener('click', (event) => {
       if (event.target.classList.contains('delete-btn')) {
