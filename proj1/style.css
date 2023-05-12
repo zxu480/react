@@ -1,0 +1,78 @@
+* {
+  margin: 0;
+  font-family: "Times New Roman";
+}
+
+#app {
+  margin: 40px 60px;
+  height: 600px;
+  display: flex;
+  justify-content: space-around;
+  border: 1px solid black;
+  border-radius: 10px;
+}
+
+.inventory-container,
+.cart-container {
+    position: relative;
+  margin: 40px 20px;
+  width: 400px;
+}
+
+h1 {
+  text-align: center;
+}
+
+ul {
+  list-style: none;
+  margin: 20px 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+}
+
+li {
+  height: 50px;
+  margin: 10px 10px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: rgb(225, 218, 200);
+  border-radius: 8px;
+}
+
+span {
+  margin: 0 10px;
+}
+
+.btn {
+  margin: 0px, 10px;
+  min-width: 40px;
+  min-height: 30px;
+  color: white;
+  border: none;
+  border-radius: 4px;
+}
+
+.decrement-btn {
+  background-color: rgb(177, 72, 73);
+}
+
+.increment-btn {
+  background-color: rgb(116, 173, 80);
+}
+
+.addToCart-btn,
+.delete-btn {
+  background-color: rgb(61, 110, 171);
+}
+
+.checkout-btn {
+  background-color: black;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  /* padding: 10px; */
+  width: inherit;
+}

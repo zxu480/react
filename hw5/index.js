@@ -5,6 +5,17 @@ const DATA = [
   {name: 'bacon', category: 'meat'}
 ];
 
+const API = (() =>{
+
+    const URL = "http://localhost:3000/items";
+    const getItems = () => fetch(URL).then(data => data.json());
+
+    return {
+        getItems
+    }
+})();
+
+
 const Model = (() => {
     class State {
         #items;
@@ -50,8 +61,12 @@ const Model = (() => {
         }
 
     };
+
+    const { getItems } = API;
+
     return {
-        State
+        State,
+        getItems
     }
 })();
 
@@ -103,7 +118,8 @@ const Controller = ((model, view) => {
         })
     };
 
-    const init = () => {
+    const init = async () => {
+        const DATA = await model.getItems();
         const categories = [...new Set(DATA.map(({ category }) => category))];
         const defaultCategory = categories?.[0] ?? '';
         state.categories = categories;
