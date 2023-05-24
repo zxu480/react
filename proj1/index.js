@@ -5,6 +5,15 @@ const API = (() => {
   const getInventory = () =>
       fetch(URL + '/inventory').then(data => data.json());
 
+  const updateInventory = (id, inventoryItem) =>
+      fetch(URL + '/inventory/' + id, {
+        method: 'PUT',
+        body: JSON.stringify(inventoryItem),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }).then((data) => data.json());
+
   const addToCart = (inventoryItem) => fetch(URL + '/cart', {
                                          method: 'POST',
                                          body: JSON.stringify(inventoryItem),
@@ -13,13 +22,14 @@ const API = (() => {
                                          },
                                        }).then((data) => data.json());
 
-  const updateCart = (id, inventoryItem) => fetch(URL + '/cart/' + id, {
-                                          method: 'PUT',
-                                          body: JSON.stringify(inventoryItem),
-                                          headers: {
-                                            'Content-Type': 'application/json',
-                                          },
-                                        }).then((data) => data.json());
+  const updateCart = (id, inventoryItem) =>
+      fetch(URL + '/cart/' + id, {
+        method: 'PUT',
+        body: JSON.stringify(inventoryItem),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }).then((data) => data.json());
   ;
 
   const deleteFromCart = (id) => fetch(URL + '/cart/' + id, {
@@ -38,12 +48,12 @@ const API = (() => {
     getInventory,
     addToCart,
     deleteFromCart,
+    updateInventory,
     checkout,
   };
 })();
 
 const Model = (() => {
-
   class State {
     #onChange;
     #inventory;
@@ -76,6 +86,7 @@ const Model = (() => {
     addToCart,
     deleteFromCart,
     checkout,
+    updateInventory
   } = API;
   return {
     State,
@@ -85,6 +96,7 @@ const Model = (() => {
     addToCart,
     deleteFromCart,
     checkout,
+    updateInventory
   };
 })();
 
@@ -123,7 +135,13 @@ const View = (() => {
         });
       }
 
-  return {inventoryEls, cartEls, checkoutBtn, renderInventoyList, renderCartList};
+  return {
+    inventoryEls,
+    cartEls,
+    checkoutBtn,
+    renderInventoyList,
+    renderCartList
+  };
 })();
 
 const Controller = ((model, view) => {
@@ -132,8 +150,8 @@ const Controller = ((model, view) => {
   const getAndShowInventroy =
       () => {
         model.getInventory().then(data => {
-          state.inventory = data.map(({content, id}) => {
-            return {content, id, amount: 0};
+          state.inventory = data.map(({content, id, totalAmount}) => {
+            return {content, id, amount: 0, totalAmount};
           });
           view.renderInventoyList(state.inventory);
         })
@@ -155,7 +173,10 @@ const Controller = ((model, view) => {
   const updateInventoryAmount =
       (id, change) => {
         const item = state.inventory.find(item => item.id === id);
-        item.amount = item.amount + change >= 0 ? item.amount + change : 0;
+        item.amount = item.amount + change >= 0 ?
+            item.amount + change > item.totalAmount ? item.totalAmount :
+                                                      item.amount + change :
+            0;
         view.renderInventoyList(state.inventory);
       }
 
@@ -180,30 +201,49 @@ const Controller = ((model, view) => {
         if (inventoryItem.amount === 0) return;
         if (cartItem) {
           const newAmount = cartItem.amount + inventoryItem.amount;
-          model.updateCart(cartItem.id, {...cartItem, amount: newAmount}).then(() => getAndShowCart());
+          model.updateCart(cartItem.id, {...cartItem, amount: newAmount})
+              .then(() => getAndShowCart());
         } else {
-          model.addToCart({content: inventoryItem.content, inventoryId: inventoryItem.id, amount: inventoryItem.amount}).then(() => getAndShowCart());
+          model
+              .addToCart({
+                content: inventoryItem.content,
+                inventoryId: inventoryItem.id,
+                amount: inventoryItem.amount
+              })
+              .then(() => getAndShowCart());
         }
       }
     })
   };
-  
+
   const handleDelete = () => {
     view.cartEls.addEventListener('click', (event) => {
       if (event.target.classList.contains('delete-btn')) {
         const inventoryId = +event.target.getAttribute('id');
-        const id = state.cart.find(item => item.inventoryId === inventoryId)?.id;
+        const id =
+            state.cart.find(item => item.inventoryId === inventoryId)?.id;
         if (id === undefined) return;
         model.deleteFromCart(id).then(() => getAndShowCart());
       }
     })
   };
 
-  const handleCheckout = () => {
-    view.checkoutBtn.addEventListener('click', () => {
-      model.checkout().then(() => getAndShowCart());
-    })
+  const updateInventroy =
+      () => {
+        return Promise.all(state.cart.map(({inventoryId, amount}) => {
+          const item = state.inventory.find(({id}) => inventoryId === id);
+          item.totalAmount -= amount
+          console.log(item)
+          return model.updateInventory(inventoryId, {...item})
+              
+        })).then(() => getAndShowInventroy());
+      }
 
+  const handleCheckout = async () => {
+    view.checkoutBtn.addEventListener('click', () => {
+      updateInventroy().then(() =>
+                                 model.checkout().then(() => getAndShowCart()))
+    })
   };
 
   const bootstrap = () => {
@@ -217,7 +257,20 @@ const Controller = ((model, view) => {
   return {
     bootstrap,
   };
-  
 })(Model, View);
 
 Controller.bootstrap();
+
+
+// let const 
+// promise
+// class
+// Array map, forEach, filter
+// [...]
+// const { a, b } = obj
+
+// Person()
+//  const p1 = new Person()
+// p1.__proto__.__proto__ === Object.prototype
+// event loop 
+// macro micro
