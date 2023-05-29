@@ -33,7 +33,7 @@ class Form extends React.Component {
       <>
         <form onSubmit={this.handleSubmit}>
           <input
-            class="todo-input"
+            className="todo-input"
             value={this.state.inputValue}
             onChange={(event) =>
               this.setState({ inputValue: event.target.value })
