@@ -11,9 +11,13 @@ export interface Book {
 }
 
 export interface SearchState {
+  query: string;
   loading: boolean;
   books: Book[];
   errorMsg: string | null;
+  totalPages: number
+  currentPage: number
+  pageSize: number
 }
 
 export interface WishListState {

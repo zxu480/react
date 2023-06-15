@@ -1,12 +1,16 @@
 import React, { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { searchBooks } from "../../store/searchReducer";
+import {
+  searchBooks,
+  updateCurrentPage,
+  updateQuery,
+} from "../../store/searchReducer";
 import { addToWishList } from "../../store/wishListReducer";
 import { AppThunkDispatch, RootState } from "../../store";
 import { Book } from "../../store/interface";
-import BookCard from "../BookCard/BookCard";
 import { Col, Row, Input, Alert, Spin } from "antd";
 import { PlusCircleOutlined } from "@ant-design/icons";
+import { BookCard, Pagination } from "..";
 
 export const responsiveCols = {
   xs: 24,
@@ -26,13 +30,30 @@ const SearchPage: React.FC = () => {
   const errorMsg: string | null = useSelector(
     (state: RootState) => state.search.errorMsg
   );
+  const totalPages: number = useSelector(
+    (state: RootState) => state.search.totalPages
+  );
+
+  const currentPage: number = useSelector(
+    (state: RootState) => state.search.currentPage
+  );
+
+  const pageSize: number = useSelector(
+    (state: RootState) => state.search.pageSize
+  );
 
   const handleSearch = useCallback((query: string) => {
-    dispatch(searchBooks(query));
+    dispatch(updateQuery(query));
+    dispatch(searchBooks());
   }, []);
 
   const handleAddToWishList = useCallback((book: Book) => {
     dispatch(addToWishList(book));
+  }, []);
+
+  const handlePageChange = useCallback((page: number) => {
+    dispatch(updateCurrentPage(page));
+    dispatch(searchBooks());
   }, []);
 
   return (
@@ -60,6 +81,12 @@ const SearchPage: React.FC = () => {
           </Col>
         ))}
       </Row>
+      <Pagination
+        pageSize={pageSize}
+        current={currentPage}
+        total={totalPages}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 };

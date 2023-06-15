@@ -37,12 +37,6 @@ const App: React.FC = () => {
         <Sider
           breakpoint="lg"
           collapsedWidth="0"
-          onBreakpoint={(broken) => {
-            console.log(broken);
-          }}
-          onCollapse={(collapsed, type) => {
-            console.log(collapsed, type);
-          }}
           style={{
             paddingTop: 24,
           }}
@@ -63,6 +57,7 @@ const App: React.FC = () => {
                 padding: 24,
                 minHeight: 800,
                 background: colorBgContainer,
+                position: 'relative'
               }}
             >
               <Routes>
