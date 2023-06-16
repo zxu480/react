@@ -12,3 +12,14 @@
   min-width: 320px;
   min-height: 100vh;
 } */
+ul {
+  padding: 0;
+}
+
+li {
+  list-style: none;
+}
+
+option:hover {
+  box-shadow: 0 0 10px 100px #d5dcdf inset;
+}

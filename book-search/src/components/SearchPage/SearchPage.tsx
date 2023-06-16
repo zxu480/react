@@ -10,7 +10,7 @@ import { AppThunkDispatch, RootState } from "../../store";
 import { Book } from "../../store/interface";
 import { Col, Row, Input, Alert, Spin } from "antd";
 import { PlusCircleOutlined } from "@ant-design/icons";
-import { BookCard, Pagination } from "..";
+import { BookCard, Pagination, SearchBar } from "..";
 
 export const responsiveCols = {
   xs: 24,
@@ -23,6 +23,7 @@ export const responsiveCols = {
 const SearchPage: React.FC = () => {
   const dispatch = useDispatch<AppThunkDispatch>();
 
+  const query: string = useSelector((state: RootState) => state.search.query);
   const books: Book[] = useSelector((state: RootState) => state.search.books);
   const loading: boolean = useSelector(
     (state: RootState) => state.search.loading
@@ -59,10 +60,14 @@ const SearchPage: React.FC = () => {
   return (
     <div>
       <div>
-        <Input.Search
+        {/* <Input.Search
           placeholder="input search text"
           onSearch={(query) => handleSearch(query)}
           style={{ width: 360 }}
+        /> */}
+        <SearchBar
+          onSearch={(query) => handleSearch(query)}
+          suggestions={books.map((book) => book?.title?.toLowerCase())}
         />
         <div style={{ height: 60, display: "flex", alignItems: "center" }}>
           {loading && <Spin size="large" />}

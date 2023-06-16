@@ -1,5 +1,6 @@
 import { Button } from "antd";
 import React, { useCallback } from "react";
+import { uuid } from 'uuidv4';
 
 interface PaginationProps {
   current: number;
@@ -48,7 +49,7 @@ const Pagination: React.FC<PaginationProps> = ({
       {indexArray.map((page, index) => {
         return page == null ? (
           <Button
-            key={index}
+            key={`${page},${index}`}
             style={{
               border: "none",
               pointerEvents: "none",
@@ -58,7 +59,7 @@ const Pagination: React.FC<PaginationProps> = ({
           </Button>
         ) : (
           <Button
-            key={index}
+            key={`${page},${index}`}
             type={page === current ? "primary" : "default"}
             onClick={() => handleChangePage(page)}
           >
