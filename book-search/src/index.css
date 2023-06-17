@@ -20,6 +20,26 @@ li {
   list-style: none;
 }
 
-option:hover {
-  box-shadow: 0 0 10px 100px #d5dcdf inset;
+.searchbar {
+  position: relative;
+}
+
+.suggestion-dropdown {
+  z-index: 999;
+  padding: 0;
+  position: absolute;
+  top: 100%;
+  background-color: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+}
+
+.suggestion-item {
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.suggestion-item:hover {
+  outline: 1px solid rgba(64, 150, 255);
 }

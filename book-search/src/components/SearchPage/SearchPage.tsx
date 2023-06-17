@@ -4,6 +4,7 @@ import {
   searchBooks,
   updateCurrentPage,
   updateQuery,
+  updateSuggestions,
 } from "../../store/searchReducer";
 import { addToWishList } from "../../store/wishListReducer";
 import { AppThunkDispatch, RootState } from "../../store";
@@ -23,8 +24,8 @@ export const responsiveCols = {
 const SearchPage: React.FC = () => {
   const dispatch = useDispatch<AppThunkDispatch>();
 
-  const query: string = useSelector((state: RootState) => state.search.query);
   const books: Book[] = useSelector((state: RootState) => state.search.books);
+  const suggestions: string[] = useSelector((state: RootState) => state.search.suggestions)
   const loading: boolean = useSelector(
     (state: RootState) => state.search.loading
   );
@@ -43,8 +44,12 @@ const SearchPage: React.FC = () => {
     (state: RootState) => state.search.pageSize
   );
 
-  const handleSearch = useCallback((query: string) => {
-    dispatch(updateQuery(query));
+  const handleInputChange = useCallback((value: string) => {
+    dispatch(updateQuery(value));
+    dispatch(updateSuggestions())
+  }, [])
+
+  const handleSearch = useCallback(() => {
     dispatch(searchBooks());
   }, []);
 
@@ -66,8 +71,9 @@ const SearchPage: React.FC = () => {
           style={{ width: 360 }}
         /> */}
         <SearchBar
-          onSearch={(query) => handleSearch(query)}
-          suggestions={books.map((book) => book?.title?.toLowerCase())}
+          onInputChange={handleInputChange}
+          onSearch={handleSearch}
+          suggestions={suggestions}
         />
         <div style={{ height: 60, display: "flex", alignItems: "center" }}>
           {loading && <Spin size="large" />}

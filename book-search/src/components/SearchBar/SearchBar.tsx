@@ -1,87 +1,93 @@
-import { Button, Input, Select } from "antd";
-import { Option } from "antd/es/mentions";
 import React, { useMemo, useState } from "react";
+import { Button, Input, Select } from "antd";
+
 
 interface SearchBarProps {
-  onSearch: (query: string) => void;
+  onSearch: () => void;
+  onInputChange: (value: string) => void;
   suggestions: string[];
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ onSearch, suggestions }) => {
+const SearchBar: React.FC<SearchBarProps> = ({
+  onSearch,
+  onInputChange,
+  suggestions,
+}) => {
   const [searchText, setSearchText] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [selectIndex, setSelectIndex] = useState(-1);
 
-  const filteredSuggestions = useMemo(() => {
-    return suggestions.filter((text) =>
-      text.includes(searchText.toLowerCase())
-    );
-  }, [searchText]);
+  const closeSuggestions = () => {
+    setShowSuggestions(false);
+    setSelectIndex(-1);
+  }
 
   const handleSearch = () => {
-    onSearch(searchText);
-    setShowSuggestions(false);
+    onSearch();
+    closeSuggestions();
   };
 
   const handleInputChange = (value: string) => {
+    onInputChange(value);
     setSearchText(value);
     setShowSuggestions(value.trim().length > 0);
   };
 
   const handleSuggestionClick = (value: string) => {
-    setSearchText(value);
-    onSearch(value);
-    setShowSuggestions(false);
+    handleInputChange(value);
+    handleSearch();
   };
 
   const handleBlur = () => {
-    // setShowSuggestions(false);
+    closeSuggestions();
+  };
+
+  const handleKeyDown = (key: string) => {
+    if (key === "ArrowDown") {
+      setSelectIndex((selectIndex + 1) % 10);
+    } else if (key === "ArrowUp") {
+      setSelectIndex((selectIndex - 1 + 10) % 10);
+    } else if (key === "Enter") {
+      if (selectIndex !== -1) {
+        handleInputChange(suggestions[selectIndex]);
+      }
+      handleSearch();
+    }
   };
 
   return (
     <>
-      <div>
+      <div className="searchbar">
         <Input
           type="text"
           placeholder="Search for books"
           value={searchText}
           onChange={(e) => handleInputChange(e.target.value)}
           onBlur={handleBlur}
+          onKeyDown={(e) => handleKeyDown(e.key)}
           style={{ width: 600 }}
         />
         <Button onClick={handleSearch}>Search</Button>
         {showSuggestions && (
-          <ul style={{ width: 600 }}>
-            {filteredSuggestions.map((suggestion, index) => (
-              <option
-                key={suggestion + index}
-                onClick={() => handleSuggestionClick(suggestion)}
+          <ul style={{ width: 600 }} className="suggestion-dropdown">
+            {suggestions.map((suggestion, index) => (
+              <li
+                className="suggestion-item"
+                key={`${suggestion}-${index}`}
+                onMouseDown={() => handleSuggestionClick(suggestion)}
+                style={{
+                  outline:
+                    selectIndex === index
+                      ? "1px solid rgba(64, 150, 255)"
+                      : "",
+                }}
               >
                 {suggestion}
-              </option>
+              </li>
             ))}
           </ul>
         )}
       </div>
-      {/* <div>
-        <Select
-          placeholder="Search for books"
-          showSearch
-          // value={searchText}
-          onSearch={handleSearch}
-          onChange={handleInputChange}
-          style={{ width: 360 }}
-        >
-          {filteredSuggestions.map((suggestion, index) => (
-            <Option
-              key={suggestion + index}
-              // onClick={() => handleSuggestionClick(suggestion)}
-            >
-              {suggestion}
-            </Option>
-          ))}
-        </Select>
-        <Button onClick={handleSearch}>Search</Button>
-      </div> */}
     </>
   );
 };

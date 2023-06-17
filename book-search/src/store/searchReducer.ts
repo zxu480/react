@@ -15,6 +15,7 @@ const initialState: SearchState = {
   totalPages: 1,
   currentPage: 1,
   pageSize: 20,
+  suggestions: []
 };
 
 const searchSlice = createSlice<SearchState, SliceCaseReducers<SearchState>>({
@@ -51,6 +52,9 @@ const searchSlice = createSlice<SearchState, SliceCaseReducers<SearchState>>({
       .addCase(searchBooks.rejected, (state: SearchState, action) => {
         state.loading = false;
         state.errorMsg = action.error.message ?? null;
+      })
+      .addCase(updateSuggestions.fulfilled, (state: SearchState, action: PayloadAction<string[]>) => {
+        state.suggestions = action.payload;
       });
   },
 });
@@ -61,11 +65,9 @@ export const searchBooks = createAsyncThunk(
     const { query, currentPage, pageSize } = thunkAPI.getState().search;
     const startIndex = (currentPage - 1) * pageSize 
     const response = await axios.get(
-      `https://www.googleapis.com/books/v1/volumes?q=${query}&startIndex=${startIndex}&maxResults=20`
+      `https://www.googleapis.com/books/v1/volumes?q=${query}&startIndex=${startIndex}&maxResults=${pageSize}`
     );
-    console.log(response.data);
     const { totalItems, items = [] } = response.data;
-    // console.log(totalItems)
     const books: Book[] = items.map(
       ({ id, volumeInfo }: { id: string; volumeInfo: any }) => ({
         id,
@@ -77,6 +79,22 @@ export const searchBooks = createAsyncThunk(
       })
     );
     return { books, totalItems };
+  }
+);
+
+export const updateSuggestions = createAsyncThunk(
+  "search/updateSuggestions",
+  async (_args: undefined, thunkAPI: any) => {
+    const { query } = thunkAPI.getState().search;
+    const response = await axios.get(
+      `https://www.googleapis.com/books/v1/volumes?q=${query}&startIndex=0&maxResults=10`
+    );
+    console.log(response.data);
+    const { items = [] } = response.data;
+    const suggestions: string[] = items.map(
+      ({ volumeInfo }: { volumeInfo: any }) => volumeInfo?.title
+    );
+    return suggestions;
   }
 );
 
