@@ -18,6 +18,7 @@ export interface SearchState {
   totalPages: number
   currentPage: number
   pageSize: number
+  suggestions: string[]
 }
 
 export interface WishListState {
