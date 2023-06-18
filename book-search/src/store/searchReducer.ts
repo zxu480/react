@@ -89,7 +89,6 @@ export const updateSuggestions = createAsyncThunk(
     const response = await axios.get(
       `https://www.googleapis.com/books/v1/volumes?q=${query}&startIndex=0&maxResults=10`
     );
-    console.log(response.data);
     const { items = [] } = response.data;
     const suggestions: string[] = items.map(
       ({ volumeInfo }: { volumeInfo: any }) => volumeInfo?.title

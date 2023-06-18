@@ -1,6 +1,5 @@
-import React, { useMemo, useState } from "react";
-import { Button, Input, Select } from "antd";
-
+import React, { useDeferredValue, useState } from "react";
+import { Button, Input } from "antd";
 
 interface SearchBarProps {
   onSearch: () => void;
@@ -16,11 +15,12 @@ const SearchBar: React.FC<SearchBarProps> = ({
   const [searchText, setSearchText] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectIndex, setSelectIndex] = useState(-1);
+  const deferredSuggestions = useDeferredValue(suggestions);
 
   const closeSuggestions = () => {
     setShowSuggestions(false);
     setSelectIndex(-1);
-  }
+  };
 
   const handleSearch = () => {
     onSearch();
@@ -66,20 +66,26 @@ const SearchBar: React.FC<SearchBarProps> = ({
           onBlur={handleBlur}
           onKeyDown={(e) => handleKeyDown(e.key)}
           style={{ width: 600 }}
+          onMouseDown={(e) => {
+            console.log("1. onMouseDown");
+            // e.preventDefault();
+          }}
+          onFocus={() => console.log("2. onFocus")}
+          onMouseUp={() => console.log("3. onMouseUp")}
+          onClickCapture={() => console.log("4. onClickCapture")}
+          onClick={() => console.log("5. onClick")}
         />
         <Button onClick={handleSearch}>Search</Button>
         {showSuggestions && (
           <ul style={{ width: 600 }} className="suggestion-dropdown">
-            {suggestions.map((suggestion, index) => (
+            {deferredSuggestions.map((suggestion, index) => (
               <li
                 className="suggestion-item"
                 key={`${suggestion}-${index}`}
                 onMouseDown={() => handleSuggestionClick(suggestion)}
                 style={{
                   outline:
-                    selectIndex === index
-                      ? "1px solid rgba(64, 150, 255)"
-                      : "",
+                    selectIndex === index ? "1px solid rgba(64, 150, 255)" : "",
                 }}
               >
                 {suggestion}
