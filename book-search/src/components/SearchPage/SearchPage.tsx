@@ -63,7 +63,7 @@ const SearchPage: React.FC = () => {
   }, []);
 
   return (
-    <div>
+    <div data-testid="searchpage">
       <div>
         {/* <Input.Search
           placeholder="input search text"

@@ -19,18 +19,18 @@ const WishlistPage: React.FC = () => {
   }, []);
 
   return (
-    <div>
+    <div data-testid="wishlist">
       <Row gutter={[16, 16]}>
         {books.map((book) => (
-          <Col key={book.id} {...responsiveCols}>
-            <BookCard
-              book={book}
-              operation={
-                <MinusCircleOutlined
-                  onClick={() => handleRemoveFromWishlist(book.id)}
-                />
-              }
-            />
+          <Col data-testid={"bookitem"} key={book.id} {...responsiveCols}>
+              <BookCard
+                book={book}
+                operation={
+                  <MinusCircleOutlined data-testid={"removebutton"}
+                    onClick={() => handleRemoveFromWishlist(book.id)}
+                  />
+                }
+              />
           </Col>
         ))}
       </Row>
