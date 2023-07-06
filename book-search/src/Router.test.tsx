@@ -7,7 +7,6 @@ import searchbookSlice from "./store/searchReducer";
 import wishlistSlice from "./store/wishListReducer";
 import { Provider } from "react-redux";
 import userEvent from '@testing-library/user-event';
-import { act } from "react-dom/test-utils";
 
 const createMockStore = (
   preloadedState = {
